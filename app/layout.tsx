@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { AppChrome } from "@/components/app-chrome";
-import { siteMeta } from "@/lib/site-data";
+import { siteMeta } from "@/lib/site-config";
 
 import "./globals.css";
 

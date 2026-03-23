@@ -73,3 +73,21 @@ model AdminSession {
   createdAt DateTime  @default(now())
   user      AdminUser @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model SiteSettings {
+  id                   String   @id @default("site")
+  aboutHeroKicker      String
+  aboutHeroTitle       String
+  aboutHeroHighlight   String
+  aboutHeroDescription String
+  aboutMissionTitle    String
+  aboutMissionBody     String
+  aboutPrinciplesJson  String
+  aboutTimelineJson    String
+  aboutCoverageTitle   String
+  aboutCoverageBody    String
+  aboutBannerTitle     String
+  aboutBannerBody      String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}

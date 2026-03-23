@@ -1,42 +1,15 @@
-"use client";
-
-import { Create, SaveButton } from "@refinedev/antd";
-import { useCreate } from "@refinedev/core";
-import { Form } from "antd";
-import { useRouter } from "next/navigation";
-
-import { PostForm, type PostFormValues } from "@/components/admin/post-form";
+﻿import { CreatePostPageClient } from "./create-post-page-client";
 
 export default function AdminPostCreatePage() {
-  const [form] = Form.useForm<PostFormValues>();
-  const router = useRouter();
-  const { mutate } = useCreate();
-
   return (
-    <Create
-      footerButtons={() => (
-        <SaveButton onClick={() => form.submit()}>
-          保存文章
-        </SaveButton>
-      )}
-      title="新建文章"
-    >
-      <PostForm
-        form={form}
-        onFinish={(values) => {
-          mutate(
-            {
-              resource: "posts",
-              values,
-            },
-            {
-              onSuccess: () => {
-                router.push("/admin/posts");
-              },
-            },
-          );
-        }}
-      />
-    </Create>
+    <div className="page-block">
+      <section className="archive-card">
+        <p className="module-title">后台写作台</p>
+        <h2>新建文章</h2>
+        <p>使用富文本编辑器撰写正文，完成后可直接保存为草稿、提交审核或发布。</p>
+      </section>
+
+      <CreatePostPageClient />
+    </div>
   );
 }

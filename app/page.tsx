@@ -1,61 +1,46 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
+import { FeaturedCarousel } from "@/components/home/featured-carousel";
 import { StoryArt } from "@/components/story-art";
-import { categories, featuredPost, posts } from "@/lib/site-data";
+import { getPublicCategories, listPublicPosts } from "@/lib/public-site";
 
-export default function HomePage() {
-  const latest = posts.slice(1, 6);
-  const horizon = posts.slice(5, 8);
-  const observation = posts.slice(8, 14);
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const [posts, categories] = await Promise.all([listPublicPosts({ limit: 14 }), getPublicCategories()]);
+
+  if (!posts.length) {
+    return (
+      <section className="shell home-editorial home-editorial-upgraded">
+        <div className="archive-card">
+          <p className="module-title">前台已接入后台内容</p>
+          <p>当前还没有已发布文章。你可以先去后台创建并发布内容，首页会自动显示最新结果。</p>
+          <Link href="/admin/posts">进入后台文章管理</Link>
+        </div>
+      </section>
+    );
+  }
+
+  const featuredPosts = posts.filter((post) => post.featured);
+  const heroPosts = featuredPosts.length ? featuredPosts : posts.slice(0, Math.min(3, posts.length));
+  const nonHeroPosts = posts.filter((post) => !heroPosts.some((heroPost) => heroPost.slug === post.slug));
+  const fallbackHeroPosts = heroPosts.filter((post) => !nonHeroPosts.some((item) => item.slug === post.slug));
+  const editorialPool = [...nonHeroPosts, ...fallbackHeroPosts];
+  const latestFeature = editorialPool[0] ?? posts[0];
+  const latestBriefs = editorialPool.slice(1, 5);
+  const horizon = editorialPool.slice(5, 8);
+  const observation = editorialPool.slice(8, 14);
 
   return (
     <section className="shell home-editorial home-editorial-upgraded">
       <div className="home-main home-main-full">
-        <section className="home-hero-card home-hero-split">
-          <div className="hero-main-copy">
-            <p className="micro-kicker">本周主线</p>
-            <p className="hero-overline">封面故事</p>
-            <h1>{featuredPost.title}</h1>
-            <p className="hero-summary">{featuredPost.excerpt}</p>
-            <div className="hero-meta-row">
-              <span>{featuredPost.category}</span>
-              <span>{featuredPost.publishedAt}</span>
-              <span>{featuredPost.readingTime}</span>
-            </div>
-            <div className="hero-action-row">
-              <Link className="subscribe-button" href={`/posts/${featuredPost.slug}`}>
-                阅读全文
-              </Link>
-              <Link className="ghost-button" href="/posts">
-                进入归档
-              </Link>
-            </div>
-          </div>
-
-          <div className="hero-side-panel">
-            <div className="hero-side-card">
-              <p className="micro-kicker">编者按</p>
-              <p>
-                我们更关心那些正在慢慢改写产业结构、平台入口和技术基础设施的长期变化，而不是只追逐一天之内最响亮的热词。
-              </p>
-            </div>
-            <div className="hero-side-card compact">
-              <p className="micro-kicker">本期关键词</p>
-              <div className="hero-keywords">
-                {featuredPost.tags.map((tag) => (
-                  <span key={tag}>{tag}</span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+        <FeaturedCarousel posts={heroPosts} />
 
         <div className="ticker-bar upgraded">
           <span>今日信号</span>
-          <p>国内多地开始布局液冷算力园区。</p>
-          <p>浏览器厂商加速整合 AI 助手与工作流能力。</p>
-          <p>后量子密码迁移进入更多行业试点阶段。</p>
-          <p>低轨卫星网络开始面临新的密度协同问题。</p>
+          {posts.slice(0, 4).map((post) => (
+            <p key={post.slug}>{post.title}</p>
+          ))}
         </div>
 
         <section className="home-section feature-zone">
@@ -65,24 +50,24 @@ export default function HomePage() {
           </div>
 
           <div className="latest-magazine-grid">
-            <Link className="latest-feature-card" href={`/posts/${latest[0].slug}`}>
+            <Link className="latest-feature-card" href={`/posts/${latestFeature.slug}`}>
               <StoryArt
                 className="latest-feature-art"
-                label={latest[0].coverLabel}
-                palette={latest[0].coverPalette}
+                label={latestFeature.coverLabel}
+                palette={latestFeature.coverPalette}
               />
               <div className="latest-feature-copy">
-                <p className="story-kicker">{latest[0].category}</p>
-                <h3>{latest[0].title}</h3>
-                <p>{latest[0].excerpt}</p>
+                <p className="story-kicker">{latestFeature.category}</p>
+                <h3>{latestFeature.title}</h3>
+                <p>{latestFeature.excerpt}</p>
                 <span className="story-meta">
-                  {latest[0].author} / {latest[0].publishedAt} / {latest[0].readingTime}
+                  {latestFeature.author} / {latestFeature.publishedAt} / {latestFeature.readingTime}
                 </span>
               </div>
             </Link>
 
             <div className="latest-brief-grid">
-              {latest.slice(1).map((post) => (
+              {latestBriefs.map((post) => (
                 <Link className="latest-brief-card" href={`/posts/${post.slug}`} key={post.slug}>
                   <p className="story-kicker">{post.category}</p>
                   <h3>{post.title}</h3>
@@ -96,20 +81,20 @@ export default function HomePage() {
 
         <section className="red-panel upgraded">
           <div>
-            <p className="micro-kicker">策展信号</p>
-            <h2>把真正重要的技术变化，整理成更值得反复阅读的内容结构。</h2>
-            <p>加入我们的周更简报，每周收到一份经过筛选、提炼和归纳的技术观察清单。</p>
+            <p className="micro-kicker">站点状态</p>
+            <h2>前后台内容链路已经打通，前台不再依赖本地 mock 数据。</h2>
+            <p>现在你在后台创建、编辑、发布文章，首页和归档页都会实时读取数据库里的已发布内容。</p>
           </div>
           <div className="panel-actions">
-            <input aria-label="邮箱地址" placeholder="输入你的邮箱地址" type="email" />
-            <button type="button">立即订阅</button>
+            <input aria-label="后台入口提示" placeholder="下一步可继续接评论、SEO 或定时发布" type="text" />
+            <button type="button">继续迭代</button>
           </div>
         </section>
 
         <section className="home-section horizon-section">
           <div className="section-headline">
             <h2>趋势横切面</h2>
-            <Link href="/posts?category=未来">查看未来栏目</Link>
+            <Link href="/search?q=趋势">搜索更多趋势文章</Link>
           </div>
           <div className="horizon-grid">
             {horizon.map((post) => (
@@ -117,7 +102,9 @@ export default function HomePage() {
                 <p className="story-kicker">{post.category}</p>
                 <h3>{post.title}</h3>
                 <p>{post.excerpt}</p>
-                <span className="story-meta">{post.author} / {post.publishedAt}</span>
+                <span className="story-meta">
+                  {post.author} / {post.publishedAt}
+                </span>
               </Link>
             ))}
           </div>

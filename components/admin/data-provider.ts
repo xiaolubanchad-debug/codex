@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type { DataProvider } from "@refinedev/core";
 
@@ -109,6 +109,6 @@ export const adminDataProvider: DataProvider = {
     return { data: results.map((result) => result.data) };
   },
   custom: async () => {
-    throw new Error("Custom requests are not implemented yet.");
+    throw new Error("暂不支持自定义请求。");
   },
 };

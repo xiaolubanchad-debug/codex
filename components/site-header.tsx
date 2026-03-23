@@ -1,6 +1,6 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
-import { navigation, siteMeta } from "@/lib/site-data";
+import { navigation, siteMeta } from "@/lib/site-config";
 
 export function SiteHeader() {
   return (
@@ -12,7 +12,7 @@ export function SiteHeader() {
 
         <nav className="nav">
           {navigation.map((item) => (
-            <Link key={item.href} href={item.href}>
+            <Link href={item.href} key={item.href}>
               {item.label}
             </Link>
           ))}

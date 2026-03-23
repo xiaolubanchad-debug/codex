@@ -1,8 +1,11 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { StoryArt } from "@/components/story-art";
-import { getPostBySlug, getRelatedPosts, posts } from "@/lib/site-data";
+import { bodyToHtml } from "@/lib/editorial-content";
+import { getPublicPostBySlug, getRelatedPublicPosts } from "@/lib/public-site";
+
+export const dynamic = "force-dynamic";
 
 type PostDetailPageProps = {
   params: Promise<{
@@ -10,19 +13,15 @@ type PostDetailPageProps = {
   }>;
 };
 
-export async function generateStaticParams() {
-  return posts.map((post) => ({ slug: post.slug }));
-}
-
 export default async function PostDetailPage({ params }: PostDetailPageProps) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPublicPostBySlug(slug);
 
   if (!post) {
     notFound();
   }
 
-  const relatedPosts = getRelatedPosts(post.slug, post.category);
+  const relatedPosts = await getRelatedPublicPosts(post.slug, post.category);
 
   return (
     <section className="article-page shell article-page-upgraded">
@@ -31,7 +30,9 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
           <p className="micro-kicker">{post.category} / 深度文章</p>
           <h1>{post.title}</h1>
           <p className="article-deck">{post.excerpt}</p>
-          <div className="story-meta">作者：{post.author} / {post.publishedAt} / {post.readingTime}</div>
+          <div className="story-meta">
+            作者：{post.author} / {post.publishedAt} / {post.readingTime}
+          </div>
         </div>
         <StoryArt className="detail-hero-art" label={post.coverLabel} palette={post.coverPalette} />
       </div>
@@ -45,21 +46,7 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
         </aside>
 
         <article className="detail-body upgraded">
-          <p className="drop-intro">{post.body[0]}</p>
-
-          <div className="article-divider" />
-          <h2>系统性变化，往往先从边缘征兆开始</h2>
-          <p>{post.body[1]}</p>
-          <blockquote>
-            真正值得被记录的技术变化，往往不是一次产品发布，而是底层结构开始悄悄改写整个行业的运行方式。
-          </blockquote>
-          <p>{post.body[2] ?? post.body[0]}</p>
-
-          <StoryArt className="inline-art" label="现场观察" palette={post.coverPalette} />
-
-          <h2>为什么这件事值得继续追踪</h2>
-          <p>{post.body[1]}</p>
-          <p>{post.body[0]}</p>
+          <div className="rich-text-content" dangerouslySetInnerHTML={{ __html: bodyToHtml(post.body) }} />
 
           <div className="article-tags-block">
             <p className="module-title">文章标签</p>
@@ -81,19 +68,15 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
             <p className="module-title">继续阅读</p>
             {relatedPosts.map((relatedPost) => (
               <Link className="sidebar-story" href={`/posts/${relatedPost.slug}`} key={relatedPost.slug}>
-                <StoryArt
-                  className="sidebar-art"
-                  label={relatedPost.coverLabel}
-                  palette={relatedPost.coverPalette}
-                />
+                <StoryArt className="sidebar-art" label={relatedPost.coverLabel} palette={relatedPost.coverPalette} />
                 <span>{relatedPost.title}</span>
               </Link>
             ))}
           </div>
           <div className="signal-box compact">
-            <p className="module-title">策展信号</p>
-            <h3>每周为你筛掉大部分噪音，只保留值得继续关注的技术线索。</h3>
-            <button type="button">订阅周刊</button>
+            <p className="module-title">内容联动</p>
+            <h3>这篇文章来自后台已发布内容，编辑更新后这里会直接读取最新正文。</h3>
+            <button type="button">继续浏览归档</button>
           </div>
           <div className="archive-card reading-card compact">
             <p className="module-title">返回路径</p>

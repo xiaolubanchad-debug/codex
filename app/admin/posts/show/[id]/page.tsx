@@ -1,11 +1,18 @@
-"use client";
+﻿"use client";
 
 import { Show } from "@refinedev/antd";
 import { useOne } from "@refinedev/core";
 import { Descriptions, Divider, Space, Spin, Tag, Typography } from "antd";
 import { useParams } from "next/navigation";
 
+import { ArticlePreview } from "@/components/admin/article-preview";
 import type { AdminPostRecord } from "@/lib/admin-types";
+
+const STATUS_LABEL: Record<AdminPostRecord["status"], string> = {
+  draft: "草稿",
+  review: "待审核",
+  published: "已发布",
+};
 
 export default function AdminPostShowPage() {
   const params = useParams<{ id: string }>();
@@ -31,9 +38,10 @@ export default function AdminPostShowPage() {
         <Descriptions.Item label="作者">{post.author}</Descriptions.Item>
         <Descriptions.Item label="日期">{post.publishedAt}</Descriptions.Item>
         <Descriptions.Item label="状态">
-          <Tag>{post.status}</Tag>
+          <Tag>{STATUS_LABEL[post.status]}</Tag>
         </Descriptions.Item>
         <Descriptions.Item label="阅读时长">{post.readingTime}</Descriptions.Item>
+        <Descriptions.Item label="封面标识">{post.coverLabel}</Descriptions.Item>
         <Descriptions.Item label="摘要" span={2}>
           {post.excerpt}
         </Descriptions.Item>
@@ -48,12 +56,8 @@ export default function AdminPostShowPage() {
 
       <Divider />
 
-      <Typography.Title level={4}>正文内容</Typography.Title>
-      <div className="admin-article-preview">
-        {post.body.split("\n\n").map((paragraph) => (
-          <Typography.Paragraph key={paragraph}>{paragraph}</Typography.Paragraph>
-        ))}
-      </div>
+      <Typography.Title level={4}>正文预览</Typography.Title>
+      <ArticlePreview body={post.body} excerpt={post.excerpt} title={post.title} />
     </Show>
   );
 }

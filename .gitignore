@@ -4,6 +4,8 @@ prisma/dev.db
 prisma/dev.db-journal
 data/*.db
 data/*.db-journal
+data/upload-manifest.json
+public/uploads/
 
 # local env
 .env
@@ -24,3 +26,7 @@ admin-start.err
 .DS_Store
 Thumbs.db
 *.tmp
+.tmp-*.log
+playwright-report/
+test-results/
+playwright-artifacts/

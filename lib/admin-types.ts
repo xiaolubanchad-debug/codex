@@ -1,4 +1,4 @@
-export type AdminStatus = "draft" | "review" | "published";
+﻿export type AdminStatus = "draft" | "review" | "published";
 
 export type AdminPostRecord = {
   id: string;
@@ -14,6 +14,47 @@ export type AdminPostRecord = {
   tags: string[];
   coverLabel: string;
   body: string;
+};
+
+export type AdminUploadRecord = {
+  fileName: string;
+  originalName: string;
+  mimeType: string;
+  size: number;
+  url: string;
+  modifiedAt?: string;
+};
+
+export type AdminAccountRecord = {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AdminStructuredTextItem = {
+  title: string;
+  body: string;
+};
+
+export type AdminSiteSettingsRecord = {
+  id: string;
+  aboutHeroKicker: string;
+  aboutHeroTitle: string;
+  aboutHeroHighlight: string;
+  aboutHeroDescription: string;
+  aboutMissionTitle: string;
+  aboutMissionBody: string;
+  aboutPrinciples: AdminStructuredTextItem[];
+  aboutTimeline: AdminStructuredTextItem[];
+  aboutCoverageTitle: string;
+  aboutCoverageBody: string;
+  aboutBannerTitle: string;
+  aboutBannerBody: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type AdminCategoryRecord = {
@@ -44,3 +85,5 @@ export type AdminPostInput = Partial<AdminPostRecord> & {
 export type AdminCategoryInput = Partial<AdminCategoryRecord>;
 
 export type AdminTagInput = Partial<AdminTagRecord>;
+
+export type AdminSiteSettingsInput = Partial<AdminSiteSettingsRecord>;

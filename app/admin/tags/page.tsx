@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { DeleteButton, EditButton, List, useTable } from "@refinedev/antd";
 import { Button, Space, Table } from "antd";
@@ -14,12 +14,12 @@ export default function AdminTagsPage() {
 
   return (
     <List
+      title="标签管理"
       headerButtons={() => (
         <Link href="/admin/tags/create">
           <Button type="primary">新建标签</Button>
         </Link>
       )}
-      title="标签管理"
     >
       <Table {...tableProps} pagination={false} rowKey="id">
         <Table.Column<AdminTagRecord> dataIndex="name" key="name" title="标签" />

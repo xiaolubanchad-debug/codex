@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Create, SaveButton } from "@refinedev/antd";
 import { useCreate } from "@refinedev/core";
@@ -14,12 +14,8 @@ export default function AdminCategoryCreatePage() {
 
   return (
     <Create
-      footerButtons={() => (
-        <SaveButton onClick={() => form.submit()}>
-          保存分类
-        </SaveButton>
-      )}
       title="新建分类"
+      footerButtons={() => <SaveButton onClick={() => form.submit()}>保存分类</SaveButton>}
     >
       <TaxonomyForm
         form={form}

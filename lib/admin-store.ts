@@ -1,4 +1,5 @@
 import { ensurePrismaReady, prisma } from "@/lib/prisma";
+import { buildExcerptFromBody, estimateReadingTime } from "@/lib/editorial-content";
 import { posts as sitePosts } from "@/lib/site-data";
 import type {
   AdminCategoryInput,
@@ -27,18 +28,17 @@ const slugify = (value: string) =>
     .replace(/-+/g, "-");
 
 const normalizeTags = (tags?: string[] | string) => {
+  const dedupe = (items: string[]) => Array.from(new Set(items.map((tag) => tag.trim()).filter(Boolean)));
+
   if (!tags) {
     return [];
   }
 
   if (Array.isArray(tags)) {
-    return tags.map((tag) => tag.trim()).filter(Boolean);
+    return dedupe(tags);
   }
 
-  return tags
-    .split(",")
-    .map((tag) => tag.trim())
-    .filter(Boolean);
+  return dedupe(tags.split(","));
 };
 
 const formatDate = (value: Date) => value.toISOString().slice(0, 10);
@@ -114,7 +114,7 @@ async function syncSeed() {
   }
 }
 
-async function ensureSeeded() {
+export async function ensureSeeded() {
   await ensurePrismaReady();
 
   if (!seedPromise) {
@@ -221,19 +221,20 @@ export async function getPost(id: string) {
 export async function createPost(input: AdminPostInput) {
   await ensureSeeded();
 
+  const resolvedBody = input.bodyText?.trim() || input.body?.trim() || "";
   const category = await getOrCreateCategory(input.category?.trim() || DEFAULT_CATEGORY_NAME);
   const post = await prisma.post.create({
     data: {
       title: input.title?.trim() || DEFAULT_POST_TITLE,
       slug: input.slug?.trim() || slugify(input.title?.trim() || "") || `post-${Date.now()}`,
-      excerpt: input.excerpt?.trim() || "",
+      excerpt: input.excerpt?.trim() || buildExcerptFromBody(resolvedBody),
       author: input.author?.trim() || DEFAULT_AUTHOR,
       publishedAt: new Date(input.publishedAt?.trim() || new Date().toISOString().slice(0, 10)),
-      readingTime: input.readingTime?.trim() || DEFAULT_READING_TIME,
+      readingTime: input.readingTime?.trim() || estimateReadingTime(resolvedBody) || DEFAULT_READING_TIME,
       status: input.status || "draft",
       featured: Boolean(input.featured),
       coverLabel: input.coverLabel?.trim() || DEFAULT_COVER_LABEL,
-      body: input.bodyText?.trim() || input.body?.trim() || "",
+      body: resolvedBody,
       categoryId: category.id,
     },
   });
@@ -258,20 +259,21 @@ export async function updatePost(id: string, input: AdminPostInput) {
 
   const categoryName = input.category?.trim() || current.category?.name || DEFAULT_CATEGORY_NAME;
   const category = await getOrCreateCategory(categoryName);
+  const resolvedBody = input.bodyText?.trim() || input.body?.trim() || current.body;
 
   await prisma.post.update({
     where: { id },
     data: {
       title: input.title?.trim() || current.title,
       slug: input.slug?.trim() || current.slug,
-      excerpt: input.excerpt?.trim() || current.excerpt,
+      excerpt: input.excerpt?.trim() || buildExcerptFromBody(resolvedBody) || current.excerpt,
       author: input.author?.trim() || current.author,
       publishedAt: new Date(input.publishedAt?.trim() || formatDate(current.publishedAt)),
-      readingTime: input.readingTime?.trim() || current.readingTime,
+      readingTime: input.readingTime?.trim() || estimateReadingTime(resolvedBody) || current.readingTime,
       status: input.status || current.status,
       featured: typeof input.featured === "boolean" ? input.featured : current.featured,
       coverLabel: input.coverLabel?.trim() || current.coverLabel,
-      body: input.bodyText?.trim() || input.body?.trim() || current.body,
+      body: resolvedBody,
       categoryId: category.id,
     },
   });

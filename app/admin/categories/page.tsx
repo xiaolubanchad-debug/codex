@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { DeleteButton, EditButton, List, useTable } from "@refinedev/antd";
 import { Button, Space, Table } from "antd";
@@ -14,12 +14,12 @@ export default function AdminCategoriesPage() {
 
   return (
     <List
+      title="分类管理"
       headerButtons={() => (
         <Link href="/admin/categories/create">
           <Button type="primary">新建分类</Button>
         </Link>
       )}
-      title="分类管理"
     >
       <Table {...tableProps} pagination={false} rowKey="id">
         <Table.Column<AdminCategoryRecord> dataIndex="name" key="name" title="分类" />

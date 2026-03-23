@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Edit, SaveButton } from "@refinedev/antd";
 import { useOne, useUpdate } from "@refinedev/core";
@@ -30,14 +30,7 @@ export default function AdminCategoryEditPage() {
   }
 
   return (
-    <Edit
-      footerButtons={() => (
-        <SaveButton onClick={() => form.submit()}>
-          更新分类
-        </SaveButton>
-      )}
-      title="编辑分类"
-    >
+    <Edit title="编辑分类" footerButtons={() => <SaveButton onClick={() => form.submit()}>更新分类</SaveButton>}>
       <TaxonomyForm
         form={form}
         mode="category"

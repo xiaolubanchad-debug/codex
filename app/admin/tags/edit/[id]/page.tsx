@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Edit, SaveButton } from "@refinedev/antd";
 import { useOne, useUpdate } from "@refinedev/core";
@@ -30,14 +30,7 @@ export default function AdminTagEditPage() {
   }
 
   return (
-    <Edit
-      footerButtons={() => (
-        <SaveButton onClick={() => form.submit()}>
-          更新标签
-        </SaveButton>
-      )}
-      title="编辑标签"
-    >
+    <Edit title="编辑标签" footerButtons={() => <SaveButton onClick={() => form.submit()}>更新标签</SaveButton>}>
       <TaxonomyForm
         form={form}
         mode="tag"

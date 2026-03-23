@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Create, SaveButton } from "@refinedev/antd";
 import { useCreate } from "@refinedev/core";
@@ -13,14 +13,7 @@ export default function AdminTagCreatePage() {
   const { mutate } = useCreate();
 
   return (
-    <Create
-      footerButtons={() => (
-        <SaveButton onClick={() => form.submit()}>
-          保存标签
-        </SaveButton>
-      )}
-      title="新建标签"
-    >
+    <Create title="新建标签" footerButtons={() => <SaveButton onClick={() => form.submit()}>保存标签</SaveButton>}>
       <TaxonomyForm
         form={form}
         mode="tag"
