@@ -6,10 +6,22 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push"
   },
   "dependencies": {
+    "@ant-design/icons": "^6.1.0",
+    "@ant-design/v5-patch-for-react-19": "^1.0.3",
+    "@prisma/adapter-better-sqlite3": "^7.5.0",
+    "@prisma/client": "^6.19.2",
+    "@refinedev/antd": "^6.0.3",
+    "@refinedev/core": "^5.0.11",
+    "@refinedev/nextjs-router": "^7.0.5",
+    "antd": "^5.29.3",
+    "better-sqlite3": "^12.8.0",
     "next": "15.2.4",
+    "prisma": "^6.19.2",
     "react": "19.0.0",
     "react-dom": "19.0.0"
   },
@@ -20,4 +32,3 @@
     "typescript": "5.8.2"
   }
 }
-

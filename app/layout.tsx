@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
+import { AppChrome } from "@/components/app-chrome";
 import { siteMeta } from "@/lib/site-data";
 
 import "./globals.css";
@@ -19,9 +18,7 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <body>
-        <SiteHeader />
-        <main>{children}</main>
-        <SiteFooter />
+        <AppChrome>{children}</AppChrome>
       </body>
     </html>
   );
