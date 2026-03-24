@@ -36,42 +36,50 @@ export function FeaturedCarousel({ posts }: FeaturedCarouselProps) {
 
   return (
     <section className="home-hero-card hero-carousel">
-      <div className="hero-carousel-track" style={{ transform: `translateX(-${activeIndex * 100}%)` }}>
-        {safePosts.map((post) => (
-          <article className="hero-carousel-slide" key={post.slug}>
-            <div className="hero-carousel-copy">
-              <p className="micro-kicker">本周主线</p>
-              <p className="hero-overline">封面故事</p>
-              <h1>{post.title}</h1>
-              <p className="hero-summary">{post.excerpt}</p>
-              <div className="hero-meta-row">
-                <span>{post.category}</span>
-                <span>{post.publishedAt}</span>
-                <span>{post.readingTime}</span>
-              </div>
-              <div className="hero-action-row">
-                <Link className="subscribe-button" href={`/posts/${post.slug}`}>
-                  阅读全文
-                </Link>
-                <Link className="ghost-button" href="/posts">
-                  进入归档
-                </Link>
-              </div>
-            </div>
-
-            <div className="hero-carousel-side">
-              <StoryArt className="hero-carousel-art" label={post.coverLabel} palette={post.coverPalette} />
-              <div className="hero-side-card compact">
-                <p className="micro-kicker">本期关键词</p>
-                <div className="hero-keywords">
-                  {post.tags.map((tag) => (
-                    <span key={`${post.slug}-${tag}`}>{tag}</span>
-                  ))}
+      <div className="hero-carousel-viewport">
+        <div
+          className="hero-carousel-track"
+          style={{
+            width: `${safePosts.length * 100}%`,
+            transform: `translateX(-${(100 / safePosts.length) * activeIndex}%)`,
+          }}
+        >
+          {safePosts.map((post) => (
+            <article className="hero-carousel-slide" key={post.slug} style={{ width: `${100 / safePosts.length}%` }}>
+              <div className="hero-carousel-copy">
+                <p className="micro-kicker">本周主线</p>
+                <p className="hero-overline">封面故事</p>
+                <h1>{post.title}</h1>
+                <p className="hero-summary">{post.excerpt}</p>
+                <div className="hero-meta-row">
+                  <span>{post.category}</span>
+                  <span>{post.publishedAt}</span>
+                  <span>{post.readingTime}</span>
+                </div>
+                <div className="hero-action-row">
+                  <Link className="subscribe-button" href={`/posts/${post.slug}`}>
+                    阅读全文
+                  </Link>
+                  <Link className="ghost-button" href="/posts">
+                    进入归档
+                  </Link>
                 </div>
               </div>
-            </div>
-          </article>
-        ))}
+
+              <div className="hero-carousel-side">
+                <StoryArt className="hero-carousel-art" label={post.coverLabel} palette={post.coverPalette} />
+                <div className="hero-side-card compact">
+                  <p className="micro-kicker">本期关键词</p>
+                  <div className="hero-keywords">
+                    {post.tags.map((tag) => (
+                      <span key={`${post.slug}-${tag}`}>{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
 
       {safePosts.length > 1 ? (

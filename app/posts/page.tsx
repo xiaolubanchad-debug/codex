@@ -59,7 +59,7 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
             stream.map((post) => (
               <Link className="category-story" href={`/posts/${post.slug}`} key={post.slug}>
                 <StoryArt className="category-art" label={post.coverLabel} palette={post.coverPalette} />
-                <div>
+                <div className="category-story-copy">
                   <p className="story-kicker">{post.category}</p>
                   <h2>{post.title}</h2>
                   <p>{post.excerpt}</p>
